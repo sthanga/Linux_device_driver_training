@@ -76,5 +76,62 @@ General Steps to Configure GPIO as Interrupt:
   {
       HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
   }
+*******************************************************************************************************************
+Example Summary (Platform-Independent Pseudocode):
+
+// Pseudocode
+enable_global_interrupts();
+
+void gpio_interrupt_setup() {
+    set_gpio_input(PIN);                       // Step 1
+    set_interrupt_trigger(PIN, RISING_EDGE);   // Step 2
+    enable_gpio_interrupt(PIN);                // Step 3
+    enable_global_interrupts();                // Step 5
+}
+
+void ISR_for_PIN() {                           // Step 4
+    // Handle interrupt
+}
 
 ```
+### To make a GPIO pin act as an interrupt pin
+```bash
+1. Configure the GPIO pin as Input
+  gpio_pin.mode = INPUT;
+2. Select the Interrupt Trigger Type
+        Rising edge: 0 → 1
+        Falling edge: 1 → 0
+        Both edges: Any change
+        Level (high or low): less common
+
+  gpio_interrupt_trigger(pin, EDGE_FALLING);
+
+3.Enable Interrupt for the GPIO Pin
+    Associate the GPIO pin with an interrupt line (external interrupt).
+    Enable that interrupt in the microcontroller’s interrupt controller (NVIC or similar).
+enable_gpio_interrupt(pin);
+enable_interrupt_in_controller(pin_interrupt_line);
+
+4. Write the ISR (Interrupt Service Routine)
+    This function is called when the interrupt occurs.
+    Keep it short and fast — avoid long tasks or delay functions inside.
+void gpio_pin_ISR() {
+    // Code to run on interrupt
+}
+5. Enable Global Interrupts
+    enable_global_interrupts();
+
+6.Example Summary (Platform-Independent Pseudocode):
+
+      void gpio_interrupt_setup() {
+          set_gpio_input(PIN);                       // Step 1
+          set_interrupt_trigger(PIN, RISING_EDGE);   // Step 2
+          enable_gpio_interrupt(PIN);                // Step 3
+          enable_global_interrupts();                // Step 5
+      }
+      
+      void ISR_for_PIN() {                           // Step 4
+          // Handle interrupt
+      }
+```
+
